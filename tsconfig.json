@@ -1,21 +1,41 @@
+
+
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "allowJs": false,
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
     "skipLibCheck": true,
-    "esModuleInterop": false,
-    "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "ESNext",
-    "moduleResolution": "Node",
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "preserve",
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/components/*": ["./src/components/*"],
+      "@/context/*": ["./src/context/*"],
+      "@/util/*": ["./src/util/*"],
+      "@/styles/*": ["./src/styles/*"]
+    }
   },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "service/service.js",
+    "src/pages/api/productDetail.ts",
+
+    "src/pages/api/examples/protected.js",
+    "src/pages/api/examples/session.js",
+    "src/pages/api/examples/protected.js",
+    "src/pages/api/auth/[...nextauth].js",
+    "src/pages/signin/index.tsx"
+  ],
+  "exclude": ["node_modules"]
 }
