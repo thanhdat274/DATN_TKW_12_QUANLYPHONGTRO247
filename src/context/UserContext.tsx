@@ -1,3 +1,4 @@
+import { Router } from 'next/router';
 import React, { useContext, useState } from 'react';
 import { createContext } from 'react';
 
@@ -25,12 +26,13 @@ export const UserProvider = ({ children }: any) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [token, setToken] = useState('');
 
-  // const [typeRealEstate, setTypeRealEstate] = useState(0);
-  // const [fillterAddress, setFilterAddress] = useState('');
-  // const [filterAboutPrice, setFilterAboutPrice] = useState(null);
-  // const [filterArea, setFilterArea] = useState(null);
+  Router.events.on('routeChangeStart', () => {
+    setLoading(true);
+  });
 
-  // const SetFilterData = (typeRE:number , address:string , )
+  Router.events.on('routeChangeComplete', () => {
+    setLoading(false);
+  });
 
   const value: UserState = {
     loading,
@@ -42,7 +44,7 @@ export const UserProvider = ({ children }: any) => {
     phoneNumber,
     setPhoneNumber,
     token,
-    setToken, 
+    setToken,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
