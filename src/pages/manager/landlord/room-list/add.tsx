@@ -3,7 +3,7 @@ import Link from 'next/link';
 import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 // import { useNavigate } from 'react-router-dom';
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
 import swal from 'sweetalert';
 
 type Props = {};
@@ -24,15 +24,16 @@ const Add = (props: Props) => {
     watch,
     formState: { errors },
   } = useForm<FromValues>();
-  const router = useRouter()
+  const router = useRouter();
+  const { id } = router.query;
   const onSubmit: SubmitHandler<FromValues> = async (data) => {
     try {
       await axios.post('http://localhost:3001/room', data);
-      swal("Bạn đã thêm thành công! Chuyển trang sau 2s",{
-        icon: "success",
+      swal('Bạn đã thêm thành công! Chuyển trang sau 2s', {
+        icon: 'success',
       });
       setTimeout(() => {
-        router.push('/manager/landlord/room-list')
+        router.push(`/manager/landlord/${id}/list-room`);
       }, 2000);
     } catch (error) {
       console.log(error);
@@ -87,9 +88,6 @@ const Add = (props: Props) => {
                         {errors.name && errors.name.type === 'required' && (
                           <span style={{ color: 'red' }}>Không dược để trống!</span>
                         )}
-                        {errors.name && errors.name.type === 'minLength' && (
-                          <span style={{ color: 'red' }}>Ít nhất 5 kí tự</span>
-                        )}
                       </div>
                       <div className="col-span-6">
                         <label className="block text-sm font-medium text-gray-700">
@@ -103,9 +101,6 @@ const Add = (props: Props) => {
                         />
                         {errors.price && errors.price.type === 'required' && (
                           <span style={{ color: 'red' }}>Không dược để trống!</span>
-                        )}
-                        {errors.price && errors.price.type === 'minLength' && (
-                          <span style={{ color: 'red' }}>Ít nhất 5 kí tự</span>
                         )}
                       </div>
                       <div className="col-span-6">
@@ -121,9 +116,6 @@ const Add = (props: Props) => {
                         {errors.room_size && errors.room_size.type === 'required' && (
                           <span style={{ color: 'red' }}>Không dược để trống!</span>
                         )}
-                        {errors.room_size && errors.room_size.type === 'minLength' && (
-                          <span style={{ color: 'red' }}>Ít nhất 5 kí tự</span>
-                        )}
                       </div>
                       <div className="col-span-6">
                         <label className="block text-sm font-medium text-gray-700">
@@ -137,9 +129,6 @@ const Add = (props: Props) => {
                         />
                         {errors.people && errors.people.type === 'required' && (
                           <span style={{ color: 'red' }}>Không dược để trống!</span>
-                        )}
-                        {errors.people && errors.people.type === 'minLength' && (
-                          <span style={{ color: 'red' }}>Ít nhất 5 kí tự</span>
                         )}
                       </div>
                       <div>
@@ -157,15 +146,12 @@ const Add = (props: Props) => {
                           {errors.desc && errors.desc.type === 'required' && (
                             <span style={{ color: 'red' }}>Không dược để trống!</span>
                           )}
-                          {errors.desc && errors.desc.type === 'minLength' && (
-                            <span style={{ color: 'red' }}>Ít nhất 5 kí tự</span>
-                          )}
                         </div>
                       </div>
                     </div>
                     <div className="px-4 py-3 flex gap-[20px] bg-gray-50 text-right sm:px-6 ">
                       <Link
-                        href="/manager/landlord/room-list"
+                        href={`/manager/landlord/${id}/list-room`}
                         className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                       >
                         <a className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
