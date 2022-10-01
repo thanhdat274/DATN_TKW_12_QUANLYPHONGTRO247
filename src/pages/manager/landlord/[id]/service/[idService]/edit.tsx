@@ -32,7 +32,8 @@ const EditService = (props: Props) => {
       reset(data.data);
     };
     getServiceId();
-  }, []);
+  }, [idService]);
+
   const onSubmit: SubmitHandler<IFormInputs> = async (data) => {
     setLoading(true);
     try {
