@@ -47,7 +47,7 @@ const EditRoom = (props: Props) => {
       }
     };
     getRoom();
-  }, [param.id, param.id_room]);
+  }, [param.id, param.id_room, reset]);
 
   const onSubmit: SubmitHandler<FromValues> = async (data) => {
     console.log('data từ form', data);
