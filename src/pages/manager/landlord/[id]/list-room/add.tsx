@@ -1,44 +1,48 @@
-import { MotionValue } from 'framer-motion';
+import { useUserContext } from '@/context/UserContext';
+import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { supabase } from 'src/apis/supabase';
-import { addHouse } from 'src/pages/api/house';
-import swal from 'sweetalert';
+import { SubmitHandler, useForm } from 'react-hook-form';
+
+import { Toast } from 'src/hooks/toast';
 type Props = {};
 
-type FormInput = {
+type FromValues = {
+  id: string;
   name: string;
-
-  address: string;
+  price: number;
+  area: number;
+  max: number;
+  status: boolean;
+  houseId: string;
 };
 
 const AddRoom = (props: Props) => {
-  const [houses, setHouse] = useState([]);
+  const { setLoading } = useUserContext();
+  const [showMsg, setShowMsg] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm<FromValues>();
   const router = useRouter();
   const { id } = router.query;
-  const onSubmit = async (dataForm: any) => {
-    console.log('data', dataForm);
+  console.log('id nhà', id);
 
+  const onSubmit: SubmitHandler<FromValues> = async (data) => {
+    console.log('data từ form', data);
+    setLoading(true);
     try {
-      await supabase.from('list-room').insert([{ ...dataForm, id_house: Number(id) }]);
-
-      swal('Bạn đã thêm phòng thành công! Chuyển trang sau 2s', {
-        icon: 'success',
-      });
-      setTimeout(() => {
+      await axios.post(`https://633505ceea0de5318a0bacba.mockapi.io/api/house/${id}/room`, data).then((data: any) => {
+        setLoading(false);
+        setShowMsg(true);
         router.push(`/manager/landlord/${id}/list-room`);
-      }, 2000);
-    } catch (error) {
-      swal('Đã xảy ra lỗi!', {
-        icon: 'error',
+        Toast('success', 'Thêm mới phòng thành công');
       });
+    } catch (error) {
+      setLoading(false);
+      Toast('error', 'Thêm mới phòng không thành công');
     }
   };
 
@@ -88,7 +92,6 @@ const AddRoom = (props: Props) => {
                       <select
                         className="mt-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         {...register('status', { required: true })}
-                        name=""
                         id="status"
                       >
                         <option value="true">Sẵn sàng</option>
@@ -119,7 +122,7 @@ const AddRoom = (props: Props) => {
                         className="mt-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="max"
                         type="number"
-                        {...register('max', { required: true, min: 0 })}
+                        {...register('max', { required: true })}
                       />
                       {errors.max && errors.max.type === 'required' && (
                         <span className="text-[red] mt-1 block">Không dược để trống!</span>
@@ -134,7 +137,7 @@ const AddRoom = (props: Props) => {
                         className="mt-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="area"
                         type="number"
-                        {...register('area', { required: true, min: 1 })}
+                        {...register('area', { required: true })}
                       />
                       {errors.area && errors.area.type === 'required' && (
                         <span className="text-[red] mt-1 block">Không dược để trống!</span>
