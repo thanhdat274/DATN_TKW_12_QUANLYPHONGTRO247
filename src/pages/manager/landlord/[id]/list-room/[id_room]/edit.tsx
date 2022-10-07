@@ -31,6 +31,8 @@ const EditRoom = (props: Props) => {
   const router = useRouter();
   const param = router.query;
   // const { id } = router.query;
+  console.log(param);
+  
 
   useEffect(() => {
     const getRoom = async () => {
@@ -47,7 +49,7 @@ const EditRoom = (props: Props) => {
       }
     };
     getRoom();
-  }, [param.id, param.id_room, reset]);
+  }, [param.id, param.id_room]);
 
   const onSubmit: SubmitHandler<FromValues> = async (data) => {
     console.log('data từ form', data);
