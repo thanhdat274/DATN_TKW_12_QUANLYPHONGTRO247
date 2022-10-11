@@ -83,7 +83,6 @@ const HeaderPreview = (props: Props) => {
                       <Link href={'/auth'}>
                         <a
                           className="rounded-t rounded-md bg-slate-200 font-bold hover:text-gray-50 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap"
-                          href="#"
                         >
                           Đăng nhập
                         </a>
@@ -94,7 +93,6 @@ const HeaderPreview = (props: Props) => {
                       <Link href={'/auth'}>
                         <a
                           className="bg-slate-200 hover:bg-gray-400 hover:text-gray-50 rounded-md font-bold py-2 px-4 block whitespace-no-wrap"
-                          href="#"
                         >
                           Đăng kí
                         </a>
