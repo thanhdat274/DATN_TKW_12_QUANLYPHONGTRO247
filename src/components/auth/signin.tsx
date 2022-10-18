@@ -13,8 +13,9 @@ type FormValues = {
   password: string;
 };
 
+
 const Signin = (props: Props) => {
-  const { setLoading, setUser } = useUserContext();
+  const { setLoading, setUser, setToken } = useUserContext();
   const router = useRouter();
   const {
     register,
@@ -27,17 +28,15 @@ const Signin = (props: Props) => {
       .then((data) => {
         setLoading(false);
         setUser(data.data.user);
+        setToken(data.data.token);
+        localStorage.setItem('user', JSON.stringify(data.data) as string);
+        // localStorage.setItem('user', JSON.stringify(data.data.user) as string);
         Toast('success', 'Đăng nhập thành công');
         router.push(`/`);
-        console.log(data.data.user);
       })
       .catch((error) => {
-        console.log(error.response.data.error);
-        const message = error.response.data.error;
-        if (message === 'Email and password not match') {
-          Toast('error', 'Email hoặc mật khẩu sai');
-          setLoading(false);
-        }
+        Toast('error', error.response.data.error);
+        setLoading(false);
       });
   };
 
