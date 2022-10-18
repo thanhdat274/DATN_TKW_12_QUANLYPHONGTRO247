@@ -7,6 +7,7 @@ import axios from 'axios';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
+import { readRoom } from 'src/pages/api/room';
 
 const TenantInformation = dynamic(() => import('@/components/TenantInfo'), { ssr: false });
 
@@ -14,6 +15,8 @@ type Props = {};
 
 const ManageRoom = () => {
   const [roomData, setRoomData] = useState({});
+  const [peopleData, setPeopleData] = useState({});
+
   const router = useRouter();
 
   const { setLoading } = useUserContext();
@@ -22,12 +25,11 @@ const ManageRoom = () => {
     setLoading(true);
 
     try {
-      const res = await axios.get(
-        `https://633505ceea0de5318a0bacba.mockapi.io/api/house/${param.id}/room/` + `${param.id_room}`,
-      );
-      if (res.data) {
-        setRoomData(res.data);
+      const {data} = await  readRoom(`${param.id_room}`)
+      if (data.data) {
+        setRoomData(data.data);
         setLoading(false);
+        
       }
     } catch (error) {
       setLoading(false);
@@ -35,35 +37,39 @@ const ManageRoom = () => {
     }
   };
 
-  const TenantMemberData: IMember[] = [
-    // {
-    //   name: 'pham dai nghia',
-    //   phoneNumber: '0824144695',
-    //   cardNumber: '071233434',
-    // },
-    // {
-    //   name: 'pham dai nghia',
-    //   phoneNumber: '0824144695',
-    //   cardNumber: '071233434',
-    // },
-    // {
-    //   name: 'pham dai nghia',
-    //   phoneNumber: '0824144695',
-    //   cardNumber: '071233434',
-    // },
-    // {
-    //   name: 'pham dai nghia',
-    //   phoneNumber: '0824144695',
-    //   cardNumber: '071233434',
-    // },
-  ];
+  // api people
+
+  const getPeople = async () => {
+    setLoading(true);
+
+    try {
+      const res = await axios.get(
+        `https://633505ceea0de5318a0bacba.mockapi.io/api/house/${param.id}/room/${param.id_room}/people`,
+      );
+      if (res.data ) {
+        setPeopleData(res.data );
+        setLoading(false);
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+  };
+  
+
 
   const param = router.query;
+  console.log(param);
+
   useEffect(() => {
     if (param.id) {
       getRoom();
+     
     }
+     getPeople();
   }, [param.id]);
+  
+
 
   const data = [
     {
@@ -74,7 +80,7 @@ const ManageRoom = () => {
     {
       label: 'Thành viên',
       value: 1,
-      children: <TenantMember data={TenantMemberData} />,
+      children: <TenantMember data={peopleData as IMember[]} data1 = {roomData}  />,
     },
 
     {
