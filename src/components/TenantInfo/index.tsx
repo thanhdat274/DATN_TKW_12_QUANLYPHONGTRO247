@@ -24,7 +24,8 @@ const TenantInformation = ({ data }: any) => {
   const router = useRouter();
   const param = router.query;
 
-  const { setLoading } = useUserContext();
+  const { cookies, setLoading } = useUserContext();
+  const a = cookies?.user;
 
   useEffect(() => {
     if (data) {
@@ -42,13 +43,16 @@ const TenantInformation = ({ data }: any) => {
       name: name,
       status: status,
       maxMember: max,
+      price:price,
+      area:area
     
     },
   });
   const onSubmit = async (data: any) => {
+    const newData = { ...data, a };
     setLoading(true);
     try {
-      await updateRoom(data)
+      await updateRoom(newData)
         .then(() => {
           setLoading(false);
           router.push(`/manager/landlord/${param.id}/list-room`);
@@ -99,7 +103,7 @@ const TenantInformation = ({ data }: any) => {
                   </select>
                 </div>
 
-                {/* <div className="col-span-6">
+                <div className="col-span-6">
                   <label className="block text-gray-700 text-sm font-bold" htmlFor="username">
                     Giá phòng <span className="text-[red]">*</span>
                   </label>
@@ -112,7 +116,7 @@ const TenantInformation = ({ data }: any) => {
                   {errors.price && errors.price.type === 'required' && (
                     <span className="text-[red] mt-1 block">Không dược để trống!</span>
                   )}
-                </div> */}
+                </div>
 
                 <div className="col-span-6">
                   <label className="block text-gray-700 text-sm font-bold" htmlFor="username">
@@ -129,7 +133,7 @@ const TenantInformation = ({ data }: any) => {
                   )}
                 </div>
 
-                {/* <div className="col-span-6">
+                <div className="col-span-6">
                   <label className="block text-gray-700 text-sm font-bold" htmlFor="username">
                     Diện tích <span className="text-[red]">*</span>
                   </label>
@@ -142,7 +146,7 @@ const TenantInformation = ({ data }: any) => {
                   {errors.area && errors.area.type === 'required' && (
                     <span className="text-[red] mt-1 block">Không dược để trống!</span>
                   )}
-                </div> */}
+                </div>
               </div>
 
               <div className="px-4 py-3 flex gap-[20px] bg-gray-50 text-right sm:px-6 ">
