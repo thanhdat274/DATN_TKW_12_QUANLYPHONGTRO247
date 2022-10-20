@@ -22,10 +22,10 @@ type FromValues = {
 };
 
 const AddRoom = (props: Props) => {
-  const { setLoading, user } = useUserContext();
+  const { cookies, setLoading, user } = useUserContext();
   const [showMsg, setShowMsg] = useState(false);
   const [house, setHouse] = useState<FromValues>();
-  
+  const a = cookies?.user;
 
   const {
     register,
@@ -37,7 +37,7 @@ const AddRoom = (props: Props) => {
   useEffect(() => {
     const getHome = async () => {
       try {
-        const { data } = await readHouse(`${id}`);
+        const { data } = await readHouse(`${id}`, a as any);
 
         setHouse(data as any);
       } catch (error) {
@@ -47,10 +47,11 @@ const AddRoom = (props: Props) => {
     getHome();
   }, [id]);
 
-  const onSubmit: SubmitHandler<FromValues> = async (data) => {
+  const onSubmit: SubmitHandler<FromValues> = async (data: any) => {
     setLoading(true);
+    const newData = { ...data, a };
     try {
-      await addRoom(data).then((data: any) => {
+      await addRoom(newData).then((data: any) => {
         setLoading(false);
         setShowMsg(true);
         router.push(`/manager/landlord/${id}/list-room`);
@@ -115,7 +116,7 @@ const AddRoom = (props: Props) => {
                       </select>
                     </div>
 
-                    {/* <div className="col-span-6">
+                    <div className="col-span-6">
                       <label className="block text-gray-700 text-sm font-bold" htmlFor="username">
                         Giá phòng <span className="text-[red]">*</span>
                       </label>
@@ -128,7 +129,7 @@ const AddRoom = (props: Props) => {
                       {errors.price && errors.price.type === 'required' && (
                         <span className="text-[red] mt-1 block">Không dược để trống!</span>
                       )}
-                    </div> */}
+                    </div>
 
                     <div className="col-span-6">
                       <label className="block text-gray-700 text-sm font-bold" htmlFor="username">
@@ -145,7 +146,7 @@ const AddRoom = (props: Props) => {
                       )}
                     </div>
 
-                    {/* <div className="col-span-6">
+                    <div className="col-span-6">
                       <label className="block text-gray-700 text-sm font-bold" htmlFor="username">
                         Diện tích <span className="text-[red]">*</span>
                       </label>
@@ -158,7 +159,7 @@ const AddRoom = (props: Props) => {
                       {errors.area && errors.area.type === 'required' && (
                         <span className="text-[red] mt-1 block">Không dược để trống!</span>
                       )}
-                    </div> */}
+                    </div>
                     <div className="col-span-6">
                       <label className="block text-gray-700 text-sm font-bold" htmlFor="username">
                         Nhà <span className="text-[red]">*</span>
@@ -183,7 +184,7 @@ const AddRoom = (props: Props) => {
                         className="mt-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         id="user"
                         type="text"
-                        value={user?._id}
+                        value={a?.user._id}
                         {...register('idAuth', { required: true })}
                       />
 
