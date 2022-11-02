@@ -16,8 +16,8 @@ export interface UserState {
   token: string;
   setToken: (loading: string) => void;
   logoutResetData: () => void;
-  cookies:any 
-  setCookie: any
+  cookies: any;
+  setCookie: any;
 }
 
 const UserContext = createContext<UserState | null>(null);
@@ -33,9 +33,9 @@ export const UserProvider = ({ children }: any) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [token, setToken] = useState('');
   const [cookies, setCookie, removeCookie] = useCookies(['user']);
-  
+
   const logoutResetData = () => {
-    removeCookie('user');
+    removeCookie('user', { path: '/', maxAge: 30 * 24 * 60 * 60 });
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
@@ -43,7 +43,6 @@ export const UserProvider = ({ children }: any) => {
     router.push(`/`);
     Toast('success', 'Đăng xuất thành công!');
   };
-
   const value: UserState = {
     loading,
     setLoading,
@@ -60,7 +59,11 @@ export const UserProvider = ({ children }: any) => {
     setCookie,
   };
 
-  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
+  return (
+    <div>
+      <UserContext.Provider value={value}>{children}</UserContext.Provider>
+    </div>
+  );
 };
 
 export default UserProvider;
