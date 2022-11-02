@@ -21,17 +21,17 @@ const ListServiceRoom = (props: Props) => {
   };
 
   useEffect(() => {
-    const getService = async () => {
-      setLoading(true);
-      try {
-        const { data } = await ListService(id as string, userData as any);
-        setListServices(data.data);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-      }
-    };
     if (id) {
+      const getService = async () => {
+        setLoading(true);
+        try {
+          const { data } = await ListService(id as string, userData as any);
+          setListServices(data.data);
+          setLoading(false);
+        } catch (error) {
+          setLoading(false);
+        }
+      };
       getService();
     }
   }, [id, setLoading, userData]);
@@ -153,7 +153,7 @@ const ListServiceRoom = (props: Props) => {
                               </td>
 
                               <td className="px-6 py-4 whitespace">
-                                <div className="text-center">{item.price}</div>
+                                <div className="text-center">{item.price.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}</div>
                               </td>
                               <td className="px-6 py-4 whitespace">
                                 <div className="text-center">{item.unit}</div>
