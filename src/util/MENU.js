@@ -18,7 +18,7 @@ export const MENU_LANDLORD = [
   },
   { url: 'service', title: 'Dịch vụ', icon: <FontAwesomeIcon className="w-[16px] text-black" icon={faBox} /> },
   {
-    url: 'electric-used',
+    url: 'elictric',
     title: 'Số điện',
     icon: <FontAwesomeIcon className="w-[16px] text-black" icon={faPlug} />,
   },
@@ -29,7 +29,7 @@ export const MENU_LANDLORD = [
   //   gap: true,
   //   icon: <FontAwesomeIcon className="w-[16px] text-black" icon={faCalculator} />,
   // },
-  { url: '', title: 'Phiếu chi', icon: <FontAwesomeIcon className="w-[16px] text-black" icon={faCoins} /> },
+  { url: '/', title: 'Phiếu chi', icon: <FontAwesomeIcon className="w-[16px] text-black" icon={faCoins} /> },
   // { url: 'contract-form', title: 'Mẫu hợp  đồng', icon: <FontAwesomeIcon className="w-[16px] text-black" icon={faFileContract} /> },
   { url: 'receipt', title: 'Hóa đơn', icon: <FontAwesomeIcon className="w-[16px] text-black" icon={faReceipt} /> },
 ];
