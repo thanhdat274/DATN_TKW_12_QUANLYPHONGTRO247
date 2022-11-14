@@ -72,7 +72,7 @@ const HeaderPreview = (props: Props) => {
               </a>
             </Link>
             <div>
-              <h2 className="lg:text-xl xl:text-2xl font-bold">PHẦN MỀM QUẢN LÝ NHÀ TRỌ 24/7</h2>
+              <h2 className="lg:text-xl xl:text-2xl font-bold">QUẢN LÝ NHÀ TRỌ 24/7</h2>
               <p>Đơn giản - Dễ sử dụng - Chính xác</p>
             </div>
             {cookies?.user && (
@@ -92,6 +92,11 @@ const HeaderPreview = (props: Props) => {
                       <Link href={'/auth/accountInformation'}>
                         <a className="rounded-md bg-slate-200 font-bold hover:text-gray-50 hover:bg-gray-400 py-2 px-4 block">
                           Thông tin tài khoản
+                        </a>
+                      </Link>
+                      <Link href={'/auth/changePassword'}>
+                        <a className="rounded-md bg-slate-200 font-bold hover:text-gray-50 hover:bg-gray-400 py-2 px-4 block">
+                          Đổi mật khẩu
                         </a>
                       </Link>
 
