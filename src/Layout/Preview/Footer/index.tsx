@@ -1,11 +1,13 @@
-import React from 'react'
+import React from 'react';
 
-type Props = {}
+type Props = {};
 
 const FooterPreview = (props: Props) => {
   return (
-    <div>FooterPreview</div>
-  )
-}
+    <div className="text-center bg-black">
+      <p className="px-3 text-white">Thiết kế bởi Maple JSC @2017 - 2022</p>
+    </div>
+  );
+};
 
-export default FooterPreview
+export default FooterPreview;
