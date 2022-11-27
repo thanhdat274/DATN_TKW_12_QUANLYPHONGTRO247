@@ -141,8 +141,6 @@ const ListWaterUsed = () => {
   }, [listBillData, listRoomData, setValue]);
 
   const onSubmit: SubmitHandler<FormInputs> = async (data: FormInputs) => {
-    console.log('data', data);
-
     if (monthCheck && yearCheck) {
       const confirm = window.confirm(
         'Vui lòng kiểm tra lại số nước mới của các phòng trong tháng này đã nhập đúng chưa. Nếu chưa đúng vui lòng bấm vào cancel và sửa lại trước khi lưu. Nếu đúng rồi mời bạn bấm ok để lưu số nước tháng này.',
@@ -190,12 +188,6 @@ const ListWaterUsed = () => {
               <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-2xl sm:truncate uppercase">
                 Chỉ số nước
               </h2>
-            </div>
-            <div className="flex ml-auto">
-              <button className="border flex bg-sky-500 items-center rounded-md p-1.5 mx-2">
-                <FontAwesomeIcon className="w-[16px] text-white" icon={faFileExcel} />
-                <span className="font-semibold mx-1">Xuất file excel</span>
-              </button>
             </div>
           </div>
         </div>
