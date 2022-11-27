@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import { useRouter } from 'next/router';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -14,7 +15,7 @@ export const options = {
     },
     title: {
       display: true,
-      text: 'Số điện tiêu thụ hàng tháng',
+      text: 'Số lượng điện tiêu thụ hàng tháng',
     },
   },
 };
@@ -35,17 +36,35 @@ const labels = [
 ];
 
 const BarDien = (dataDien: any) => {
-  const data = {
-    labels,
-    datasets: [
-      {
-        label: '',
-        data: dataDien.data,
-        backgroundColor: 'rgba(240, 224, 101, 0.5)',
-        borderWidth: 1,
-      },
-    ],
-  };
+  const router = useRouter();
+  const { id } = router.query;
+  if (id) {
+    var data = {
+      labels,
+      datasets: [
+        {
+          label: 'Số điện',
+          data: dataDien.data,
+          backgroundColor: 'rgb(255, 152, 152)',
+          borderWidth: 1,
+        }
+      ],
+    };
+  }
+  else {
+    var data = {
+      labels,
+      datasets: [
+        {
+          label: 'Số điện',
+          data: dataDien.data.result,
+          backgroundColor: 'rgb(255, 152, 152)',
+          borderWidth: 1,
+        }
+      ],
+    };
+  }
+
   return (
     <div className="block h-[300px] lg:h-[400px]">
       <Bar options={options} data={data} />
