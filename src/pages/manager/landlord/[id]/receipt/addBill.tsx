@@ -21,21 +21,22 @@ type FormInputs = {
   name: string;
 };
 
-type Props = {};
+type Props = {
+  onclose: () => void;
+  data: () => void;
+  setChangeValueBill: () => void;
+};
 
 const AddBill = (props: Props) => {
   const today = new Date();
   const [rooms, setRooms] = useState([]);
   const [roomsBillId, setRoomsBillId] = useState(['']);
   const [rooms1, setRooms1] = useState();
-  console.log(roomsBillId);
 
   const { setLoading, cookies } = useUserContext();
   const userData = cookies?.user;
   const [monthCheck, setMonth] = useState(today.getMonth() + 1);
   const [yearCheck, setYear] = useState(today.getFullYear());
-  const [house, setHouse] = useState<any>([]);
-  console.log(rooms1);
   const router = useRouter();
   const { id } = router.query;
 
@@ -53,20 +54,9 @@ const AddBill = (props: Props) => {
     };
     getRoom();
   }, [userData, id]);
-  useEffect(() => {
-    const getHouse = async () => {
-      try {
-        const { data } = await listHouse(userData as any);
-        if (data.data) {
-          setHouse(data.data as any);
-        }
-      } catch (error) {}
-    };
-    getHouse();
-  }, [userData]);
+
   const { register, handleSubmit, setValue, getValues, reset } = useForm<FormInputs>();
   const onSubmit: SubmitHandler<FormInputs> = async (data: any) => {
-    console.log(data);
 
     if (monthCheck && yearCheck) {
       const newData = { ...data, month: monthCheck, year: yearCheck, userData: userData };
@@ -74,21 +64,26 @@ const AddBill = (props: Props) => {
       setLoading(true);
       if (rooms1 !== '2') {
         await CreateBillHouseAll(newData)
-          .then((data: any) => {
-            Toast('success', 'Tạo hóa đơn thành công');
-            setLoading(false);
-          })
           .catch((error: any) => {
             setLoading(false);
+          }).finally(() => {
+            Toast('success', 'Tạo hóa đơn thành công');
+            setLoading(false);
+            props.onclose();
+            props.data();
+            props.setChangeValueBill()
           });
       } else {
         await CreateBillRooms(newDataRooms)
-          .then((data: any) => {
-            Toast('success', 'Tạo hóa đơn thành công');
-            setLoading(false);
-          })
+
           .catch((error: any) => {
             setLoading(false);
+          }).finally(() => {
+            Toast('success', 'Tạo hóa đơn thành công');
+            setLoading(false);
+            props.onclose();
+            props.data();
+            props.setChangeValueBill()
           });
       }
     } else {
@@ -96,7 +91,6 @@ const AddBill = (props: Props) => {
     }
   };
   const handleChange = (value: string[]) => {
-    console.log(`selected ${value}`);
     setRoomsBillId(value);
   };
   const datePickerShow = React.useMemo(() => {
@@ -129,9 +123,7 @@ const AddBill = (props: Props) => {
           <label htmlFor="small" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">
             Tính Hóa đơn theo
           </label>
-          <label htmlFor="small" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">
-            Nhà
-          </label>
+
           <select
             className="mt-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             {...register('idHouse', { required: true })}
