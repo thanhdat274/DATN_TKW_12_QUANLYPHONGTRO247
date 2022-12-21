@@ -23,8 +23,6 @@ const TenantMember = ({ data, data1, handleResetPage }: IProps) => {
   const param = router.query;
   const { cookies, setLoading, user } = useUserContext();
   const userData = cookies?.user;
-  
-
   const {
     register,
     handleSubmit,
@@ -41,6 +39,8 @@ const TenantMember = ({ data, data1, handleResetPage }: IProps) => {
       setOpen(false);
       Toast('success', result.data.message);
     }).catch((err) => {
+    
+      
       setLoading(false);
       Toast('error', err.message);
     }).finally(() => {
@@ -101,7 +101,7 @@ const TenantMember = ({ data, data1, handleResetPage }: IProps) => {
 
               <div className="col-span-6">
                 <label className="block text-gray-700 text-sm font-bold" htmlFor="username">
-                  Trạng thái phòng
+                  Chức vụ
                 </label>
                 {data1?.length < 1 ? (
                   <select
@@ -110,7 +110,7 @@ const TenantMember = ({ data, data1, handleResetPage }: IProps) => {
                     id="status"
                   >
                     {' '}
-                    <option value="true">Chủ phòng</option>
+                    <option value="true">Người đại diện</option>
                   </select>
                 ) : (
                   <select
