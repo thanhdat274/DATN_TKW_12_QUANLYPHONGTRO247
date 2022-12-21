@@ -11,6 +11,7 @@ import { Toast } from 'src/hooks/toast';
 import { Image } from 'antd';
 import 'antd/dist/antd.css';
 import ImageUploading from 'react-images-uploading';
+import { NumericFormat } from 'react-number-format';
 
 export type IContractData = {
   addressCT: string;
@@ -67,7 +68,7 @@ const TenantContract = ({ dataContract, leadMember, roomPrice, dataLandlord, roo
     formState: { errors },
     setValue,
     getValues,
-  } = useForm();
+  } = useForm<any>();
 
   useEffect(() => {
     if (dataContract) {
@@ -85,7 +86,7 @@ const TenantContract = ({ dataContract, leadMember, roomPrice, dataLandlord, roo
       setValue('endTime', contractData.endTime);
       setValue('additional', contractData.additional.join('\n'));
       setValue('timeContract', contractData.timeContract);
-      setValue('fine', contractData.fine);
+      setValue('fine', String(contractData.fine));
 
       //tenant
       setValue('TNname', infoTenant?.name ? infoTenant?.name : leadMember?.memberName);
@@ -101,7 +102,7 @@ const TenantContract = ({ dataContract, leadMember, roomPrice, dataLandlord, roo
       setValue('LLdateRange', infoLandlord?.dateRange ? infoLandlord?.dateRange : dataLandlord?.dateRange);
       setValue('LLIssuedBy', infoLandlord?.issuedBy ? infoLandlord?.issuedBy : dataLandlord?.issuedBy);
     }
-  }, [contractData, leadMember]);
+  }, [contractData, dataLandlord?.cardNumber, dataLandlord?.dateRange, dataLandlord?.issuedBy, dataLandlord?.name, dataLandlord?.phoneNumber, leadMember, setValue]);
 
   const uploadTask = (image: any) => {
     if (image.data_url == null) {
@@ -109,9 +110,7 @@ const TenantContract = ({ dataContract, leadMember, roomPrice, dataLandlord, roo
     } else {
       return new Promise((resolve, reject) => {
         const storageRef = ref(storage, `files/${image?.file?.name}`);
-
         const uploadTask = uploadBytesResumable(storageRef, image.file);
-
         uploadTask.on(
           'state_changed',
           (snapshot) => {
@@ -131,9 +130,7 @@ const TenantContract = ({ dataContract, leadMember, roomPrice, dataLandlord, roo
 
   const onSubmit = async (data: any) => {
     setLoading(true);
-
     const newAdditional = data.additional.split('\n');
-
     Promise.all(images.map((image: any) => uploadTask(image)))
       .then(async (ListImgs) => {
         const newValue = {
@@ -142,7 +139,7 @@ const TenantContract = ({ dataContract, leadMember, roomPrice, dataLandlord, roo
             endTime: data.endTime,
             additional: newAdditional,
             timeContract: data.timeContract,
-            fine: data.fine,
+            fine: Number(data.fine),
             timeCT: data.timeCT,
             addressCT: data.addressCT,
             imageContract: ListImgs,
@@ -184,7 +181,7 @@ const TenantContract = ({ dataContract, leadMember, roomPrice, dataLandlord, roo
             endTime: data.endTime,
             additional: newAdditional,
             timeContract: data.timeContract,
-            fine: data.fine,
+            fine: Number(data.fine),
             timeCT: data.timeCT,
             addressCT: data.addressCT,
             imageContract: dataContract.imageContract,
@@ -222,7 +219,6 @@ const TenantContract = ({ dataContract, leadMember, roomPrice, dataLandlord, roo
   };
 
   return (
-
     <div className="max-w-full mx-auto ">
       <div className="md:grid md:grid-cols-3 md:gap-6">
         <div className="px-4 py-5 bg-white space-y-6 sm:p-6 mt-5 md:mt-0 md:col-span-3 border rounded-md">
@@ -399,7 +395,7 @@ const TenantContract = ({ dataContract, leadMember, roomPrice, dataLandlord, roo
                     <span className="text-[red] mt-1 block">Vui lòng nhập số CMND/CCCD!</span>
                   )}
                   {errors.LLcardNumber?.type === 'minLength' && (
-                    <span className="text-[red] mt-1 block">Số CMND/CCCD phải tối thiểu 9 chữ số!</span>
+                    <span className="text-[red] mt-1 block">CMND/CCCD không đúng định dạng</span>
                   )}
                   {errors.LLcardNumber?.type === 'maxLength' && (
                     <span className="text-[red] mt-1 block">Số CMND/CCCD phải tối đa 12 chữ số!</span>
@@ -500,7 +496,7 @@ const TenantContract = ({ dataContract, leadMember, roomPrice, dataLandlord, roo
                     <span className="text-[red] mt-1 block">Vui lòng nhập số CMND/CCCD!</span>
                   )}
                   {errors.TNcardNumber?.type === 'minLength' && (
-                    <span className="text-[red] mt-1 block">Số CMND/CCCD phải tối thiểu 9 chữ số!</span>
+                    <span className="text-[red] mt-1 block">CMND/CCCD không đúng định dạng</span>
                   )}
                   {errors.TNcardNumber?.type === 'maxLength' && (
                     <span className="text-[red] mt-1 block">Số CMND/CCCD phải tối đa 12 chữ số!</span>
@@ -575,15 +571,21 @@ const TenantContract = ({ dataContract, leadMember, roomPrice, dataLandlord, roo
                     <label className="block text-gray-700 text-sm font-bold">
                       Tiền phạt nếu vi phạm <span className="text-[red]">*</span>
                     </label>
-                    <input
-                      type="number"
-                      className="mt-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline max-h-10 md:col-span-3"
-                      {...register('fine', {
-                        pattern: /^[0-9]+$/
-                      })}
+                    <NumericFormat
+                      value={String(contractData?.fine)}
+                      thousandSeparator="," className="mt-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline max-h-10 md:col-span-3" defaultValue="0" {...register('fine', {
+                      required: false,
+                      minLength: 4
+                    })}
+                      onChange={(e) => {
+                        setValue('fine', Number(e.target.value.split(',').join('')))
+                      }}
                     />
-                    {errors.fine?.type === 'pattern' && (
-                      <span className="text-[red] mt-1 block">Số tiền phạt không được nhỏ hơn 0 VNĐ!</span>
+                    {errors.fine?.type === 'required' && (
+                      <span className="text-[red] mt-1 block">Nhập số tiền phạt!</span>
+                    )}
+                    {errors.fine?.type === 'minLength' && (
+                      <span className="text-[red] mt-1 block">Tiền cọc tối thiểu 1.000 VNĐ</span>
                     )}
                   </div>
                 </div>
