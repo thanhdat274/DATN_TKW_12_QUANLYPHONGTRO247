@@ -70,8 +70,28 @@ const Receipt = () => {
     );
   }, [monthCheckk, yearCheckk]);
 
+  const [filterBill, setFilterBill] = useState("all")
+
+  const filterBillLisst = bill?.filter((bil: any) => {
+
+    if (filterBill === "conno") {
+      return bil.paymentStatus === 1;
+    } else if (filterBill == "chuatt") {
+      return bil.paymentStatus === 0;
+    } else if (filterBill === "datt") {
+      return bil.paymentStatus === 2;
+    } else {
+      return bil;
+    }
+  })
+  const onFilterBill = (event: any) => {
+    setFilterBill(event.target.value);
+
+  }
+
   return (
     <div className="h-screen">
+
       <header className="bg-white shadow">
         <div className="max-w-full mx-auto py-6 px-4 sm:px-6 lg:px-8">
           <div className="lg:flex lg:items-center lg:justify-between">
@@ -80,19 +100,22 @@ const Receipt = () => {
                 Quản lý hóa đơn
               </h2>
             </div>
-            <div className="flex gap-2 flex-col md:flex-row md:gap-4">
-              <div>
-                <Space direction="vertical">{datePickerShow} </Space>
-              </div>
-
-              <div className="">
-                <button
-                  onClick={onOpenModal1}
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full "
-                >
-                  Tính hóa đơn
-                </button>
-              </div>
+            <div>
+              <select onChange={onFilterBill} id="countries" className="border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 focus:outline-none focus:shadow-outline">
+                <option value="all">Tất cả</option>
+                <option value="conno">Còn nợ</option>
+                <option value="chuatt">Chưa thanh toán</option>
+                <option value="datt">Đã thanh toán</option>
+              </select>
+            </div>
+            <div className="mt-5 flex gap-2 lg:mt-0 lg:ml-4 md:gap-4 items-center">
+              {datePickerShow}
+              <button
+                onClick={onOpenModal1}
+                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Tính hóa đơn
+              </button>
             </div>
           </div>
         </div>
@@ -143,7 +166,7 @@ const Receipt = () => {
                       </thead>
 
                       <>
-                        {bill?.map((item: any, index: number) => {
+                        {filterBillLisst?.map((item: any, index: number) => {
                           const initialValue = 0;
                           const sumWithInitial =
                             item?.invoiceService.reduce(
@@ -175,30 +198,27 @@ const Receipt = () => {
                                       {sumWithInitial.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                                     </div>
                                   </td>
-                                  <td>
+                                  <td className='px-6 py-4 whitespace'>
                                     <div className="">
-                                      <p>
-                                        {status && (
-                                          <div className=" text-green-600 flex ">
-                                            <p className="w-full pt-4 text-right"> Đã thanh toán</p>
-                                            <span className="w-full pt-5 pl-3 ">
-                                              {' '}
-                                              <FontAwesomeIcon className="w-[16px] " icon={faCheck} />
-                                            </span>
-                                          </div>
-                                        )}
-                                      </p>
-                                      <p>
-                                        {!status && (
-                                          <div className=" text-red-500 flex ">
-                                            <p className="w-full pt-3 text-right"> Chưa thanh toán</p>
-                                            <span className="w-full pt-3 pl-3 ">
-                                              {' '}
-                                              <FontAwesomeIcon className="w-[12px] " icon={faXmark} />
-                                            </span>
-                                          </div>
-                                        )}
-                                      </p>
+                                      {status === 2 ? (
+                                        <div className="text-green-600 text-center py-4">
+                                          Đã thanh toán
+                                        </div>
+                                      ) : (<div></div>)}
+                                      {status === 1 ? (
+                                        <div className="text-yellow-500 text-center py-4">
+                                          Còn nợ
+                                        </div>
+                                      ) : (
+                                        <div></div>
+                                      )}
+                                      {status === 0 ? (
+                                        <div className="text-red-500 text-center py-4">
+                                          Chưa thanh toán
+                                        </div>
+                                      ) : (
+                                        <div></div>
+                                      )}
                                     </div>
                                   </td>
                                   <td className="px-6 py-4 whitespace">
@@ -230,7 +250,7 @@ const Receipt = () => {
 
       <div>
         <Modal open={open1} onClose={onCloseModal1} center>
-          <div className="w-full">
+          <div className="w-full pt-3">
             <div className="grid grid-flow-col px-4 py-2 text-white bg-cyan-500 mt-4">
               <div className="">
                 <h2 className="pt-2 text-xl">Tính tiền </h2>

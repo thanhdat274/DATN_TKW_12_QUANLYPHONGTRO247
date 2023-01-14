@@ -12,20 +12,25 @@ export const options = {
     title: {
       display: true,
       text: 'Thống kê phòng',
+      font: {
+        size: 24
+      }
     },
   },
 };
 
 export function PieChart(dataRoomStatus: any) {
+  const dataRoom = dataRoomStatus.dataRoomStatus
   const dataPie = {
     labels: ['Phòng chưa có người ở', 'Phòng dang sử dụng', 'Phòng đang sửa chữa'],
     datasets: [
       {
         label: '# of Votes',
         data: [
-          dataRoomStatus.dataRoomStatus.roomReadyEmpty,
-          dataRoomStatus.dataRoomStatus.roomReadyUsing,
-          dataRoomStatus.dataRoomStatus.roomNotReady,
+          dataRoom?.roomReadyEmpty?.count,
+          dataRoom?.roomReadyUsing
+            ?.count,
+          dataRoom?.roomNotReady?.count,
         ],
         backgroundColor: ['rgb(254,240,138)', 'rgb(134,239,172)', 'rgb(252,165,165)'],
         borderColor: ['rgb(254,240,138)', 'rgb(134,239,172)', 'rgb(252,165,165)'],

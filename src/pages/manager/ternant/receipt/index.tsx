@@ -5,6 +5,7 @@ import Modal from 'react-responsive-modal';
 import 'antd/dist/antd.css';
 import { getBillIdRoom } from 'src/pages/api/bill';
 import { useUserContext } from '@/context/UserContext';
+import { createPaymentInTenant } from 'src/pages/api/payment';
 type Props = {};
 
 const InfoReceipt = (props: Props) => {
@@ -48,14 +49,31 @@ const InfoReceipt = (props: Props) => {
   if (bills) {
     for (var i = 0; i < bills.length; i++) {
       const initialValue = 0;
-      var totalPrice =
-        bills &&
-        bills[i]?.invoiceService.reduce(
-          (previousValue: number, currentValue: any) => previousValue + currentValue.amount,
-          initialValue,
-        );
+      var totalPrice = bills[i]?.invoiceService.reduce(
+        (previousValue: number, currentValue: any) => previousValue + currentValue.amount,
+        initialValue,
+      ) + bills[i]?.debt;
+
       var debtTotal = totalPrice - bills[i]?.paidAmount;
     }
+  }
+
+  const handlePaymentBill = async () => {
+    const data = {
+      amount: debtTotal,
+      orderDescription: `${monthCheckk},${yearCheckk},${debtTotal},${cookies?.code_room?._id},${cookies?.code_room?.idHouse},${cookies?.code_room?.name},${bills[0]?._id}`,
+      orderType: "billpayment",
+      language: 'vn',
+      bankCode: '',
+      month: monthCheckk,
+      year: yearCheckk
+    }
+    await createPaymentInTenant(cookies?.code_room?.idHouse, data).then((result) => {
+      window.location.href = result.data.redirect
+    }).catch((err) => {
+      console.log('err', err);
+
+    });
   }
 
   return (
@@ -106,7 +124,7 @@ const InfoReceipt = (props: Props) => {
                               </svg>
                               <span className="text-sm">www.quanlyphongtro247.com</span>
                             </li>
-                            <li className="flex flex-col p-2 border-l-2 border-indigo-200">
+                            <li className="flex flex-col p-2 border-l-2 border-indigo-200 items-center">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="w-6 h-6 text-blue-600"
@@ -136,33 +154,24 @@ const InfoReceipt = (props: Props) => {
                       <div className="flex justify-between p-4">
                         <div>
                           <h6 className="font-bold">
-                            Ngày gửi hóa đơn : <span className="text-sm font-medium"> {bill.createdAt}</span>
+                            Ngày gửi hóa đơn: <span className="text-sm font-medium">{moment(bill.createdAt).format('DD/MM/YYYY')}</span>
                           </h6>
                         </div>
-                        <div className="w-40">
-                          <address className="text-sm">
-                            <span className="font-bold"> Thanh toán cho : </span>
+                        <div>
+                          <p className="text-sm">
+                            <span className="font-bold">Thanh toán cho: </span>
                             {bill.memberName}
-                            {/* 795 Folsom Ave
-                          San Francisco, CA 94107
-                          P: (123) 456-7890 */}
-                          </address>
+                          </p>
                         </div>
                         <div />
                       </div>
-                      <div className="flex r p-4 max-w-[100%] justify-center">
+                      <div className="flex max-w-[100%] justify-center">
                         <div className="border-b border-gray-200 justify-between shadow w-full">
                           <table className="2xs:overflow-x-auto 2xs:overflow-y-auto w-full text-left">
                             <thead className="bg-gray-50">
                               <tr>
-                                <th className="px-4 py-2 text-xs text-gray-500 ">Loại hóa đơn</th>
-                                {/* <th className="px-4 py-2 text-xs text-gray-500 ">
-                                Số lượng
-                              </th>
-                              <th className="px-4 py-2 text-xs text-gray-500 ">
-                                Đơn giá
-                              </th> */}
-                                <th className="px-4 py-2 text-xs text-gray-500 ">Thành tiền</th>
+                                <th className="px-4 py-2 text-base text-gray-500 ">Loại hóa đơn</th>
+                                <th className="px-4 py-2 text-base text-gray-500 text-right">Thành tiền</th>
                               </tr>
                             </thead>
                             <tbody className="bg-white">
@@ -175,13 +184,8 @@ const InfoReceipt = (props: Props) => {
                                     <td className="px-6 py-4">
                                       <div className="text-sm text-gray-900">{totalBill?.serviceName}</div>
                                     </td>
-                                    {/* <td className="2xs:hidden px-6 py-4">
-                                  <div className="text-sm text-gray-500">4</div>
-                                </td>
-                                <td className="px-6 py-4 text-sm text-gray-500">
-                                  $20
-                                </td> */}
-                                    <td className="px-6 py-4">
+
+                                    <td className="px-6 py-4 text-right">
                                       {totalBill?.amount.toLocaleString('it-IT', {
                                         style: 'currency',
                                         currency: 'VND',
@@ -190,54 +194,50 @@ const InfoReceipt = (props: Props) => {
                                   </tr>
                                 );
                               })}
+                              {bill?.debt !== 0 &&
+                                <tr className="whitespace-nowrap">
+                                  <td className="px-6 py-4">
+                                    <div className="text-sm text-gray-900">Tiền nợ tháng trước</div>
+                                  </td>
+
+                                  <td className="px-6 py-4 text-right">
+                                    {bill?.debt?.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}
+                                  </td>
+                                </tr>
+                              }
                               <tr className="text-white bg-gray-800">
-                                <td className="text-sm font-bold text-green-400 p-4">
+                                <td className="text-sm font-bold px-6 py-4">
+                                  <b>Tổng tiền</b>
+                                </td>
+                                <td className="text-sm font-bold text-right px-6 py-4">
+                                  <b>{totalPrice?.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}</b>
+                                </td>
+                              </tr>
+                              <tr className="text-white bg-gray-800">
+                                <td className="text-sm font-bold text-green-400 px-6 py-4">
                                   <b>Số tiền đã đóng</b>
                                 </td>
-                                <td className="text-sm font-bold  text-green-400">
+                                <td className="text-sm font-bold  text-green-400 text-right px-6 py-4">
                                   <b>
-                                    {bill?.paidAmount.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}
+                                    {bill?.paidAmount?.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}
                                   </b>
                                 </td>
                               </tr>
                               <tr className="text-white bg-gray-800">
-                                <td className="text-sm font-bold p-4">
-                                  <b>Tổng tiền</b>
-                                </td>
-                                <td className="text-sm font-bold text-red-500">
-                                  <b>{totalPrice.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}</b>
-                                </td>
-                              </tr>
-                              <tr className="text-white bg-gray-800">
-                                <td className="text-sm font-bold p-4 text-yellow-400">
+                                <td className="text-sm font-bold text-yellow-400 px-6 py-4">
                                   <b>Số tiền còn nợ</b>
                                 </td>
-                                <td className="text-sm font-bold text-yellow-400">
-                                  <b>{debtTotal.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}</b>
+                                <td className="text-sm font-bold text-yellow-400 text-right px-6 py-4">
+                                  <b>{debtTotal?.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}</b>
                                 </td>
                               </tr>
                             </tbody>
                           </table>
                         </div>
                       </div>
-                      <div className="flex justify-between p-4">
-                        <div>
-                          <h3 className="text-xl">Điều khoản và điều kiện :</h3>
-                          <ul className="text-md list-disc list-inside">
-                            <li>
-                              Tất cả các tài khoản sẽ được thanh toán trong vòng 7 ngày kể từ ngày nhận được hóa đơn.
-                            </li>
-                            <li>Được thanh toán bằng séc hoặc thẻ tín dụng hoặc thanh toán trực tiếp trực tuyến.</li>
-                            <li>
-                              Nếu tài khoản không được thanh toán trong vòng 7 ngày, các chi tiết tín dụng được cung
-                              cấp.
-                            </li>
-                          </ul>
-                        </div>
-                        <div className="p-4">
-                          <h3>Chữ ký</h3>
-                          <div className="text-4xl italic text-indigo-500">Demo</div>
-                        </div>
+                      <div className='px-4'>
+                        {debtTotal == 0 && <div className="border border-transparent shadow-sm text-sm font-medium rounded-lg text-white text-center bg-green-400 hover:green-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 w-full px-6 py-4 my-4 "> Đã thanh toán </div>}
+                        {debtTotal != 0 && <div onClick={() => handlePaymentBill()} className='cursor-pointer w-full px-6 py-4 my-4 text-white bg-blue-600 rounded-lg hover:bg-blue-600 border border-transparent shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 text-center'>Thanh toán hóa đơn</div>}
                       </div>
                       <div className="w-full h-0.5 bg-indigo-500" />
                       <div className="p-4">
@@ -245,11 +245,7 @@ const InfoReceipt = (props: Props) => {
                           Cảm ơn bạn rất nhiều vì đã sử dụng dịch vụ của chúng tôi.
                         </div>
                         <div className="flex items-end justify-end space-x-3">
-                          {/* <button className="px-4 py-2 text-sm text-green-600 bg-green-100">Print</button>
-                        <button className="px-4 py-2 text-sm text-blue-600 bg-blue-100">Save</button> */}
-                          <button className="px-4 py-2 text-sm text-red-600 bg-red-100 font-extrabold tracking-widest">
-                            Phản hồi
-                          </button>
+
                         </div>
                       </div>
                     </div>
@@ -257,6 +253,7 @@ const InfoReceipt = (props: Props) => {
                 </div>
               </main>
             );
+
           })
         ) : (
           <main className="bg-white relative overflow-hidden h-screen">

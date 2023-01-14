@@ -11,6 +11,8 @@ export interface UserState {
   setUser: (loading: any) => void;
   dateOfBirth: number;
   setDateOfBirth: (loading: number) => void;
+  resetPage: number;
+  setResetPage: (loading: number) => void;
   phoneNumber: string;
   setPhoneNumber: (loading: string) => void;
   token: string;
@@ -28,24 +30,21 @@ export const useUserContext = (): UserState => useContext(UserContext) as UserSt
 
 export const UserProvider = ({ children }: any) => {
   const router = useRouter();
-
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
   const [dateOfBirth, setDateOfBirth] = useState(0);
+  const [resetPage, setResetPage] = useState(0);
+
   const [phoneNumber, setPhoneNumber] = useState('');
   const [token, setToken] = useState('');
   const [cookies, setCookie, removeCookie] = useCookies(['user', 'code_room']);
-
   const pathnameUrl = router.pathname.split('/');
-
-
   const [actives, setActives] = useState(pathnameUrl[4] || '')
-
 
   const logoutResetData = () => {
     setLoading(true);
     removeCookie('user', { path: '/', maxAge: 30 * 24 * 60 * 60 });
-    removeCookie('code_room', { path: '/', maxAge: 30 * 24 * 60 * 60 });
+    removeCookie('code_room', { path: '/', maxAge: 7 * 24 * 60 * 60 });
     setTimeout(() => {
       setLoading(false);
     }, 1000);
@@ -60,6 +59,8 @@ export const UserProvider = ({ children }: any) => {
     setUser,
     dateOfBirth,
     setDateOfBirth,
+    resetPage,
+    setResetPage,
     phoneNumber,
     setPhoneNumber,
     token,
@@ -68,7 +69,7 @@ export const UserProvider = ({ children }: any) => {
     cookies,
     setCookie,
     actives,
-    setActives
+    setActives,
   };
 
   return (

@@ -2,19 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { Image } from 'antd';
 import 'antd/dist/antd.css';
 import { useUserContext } from '@/context/UserContext';
+import { readRoomData } from 'src/pages/api/room';
 
 type Props = {};
 
 const ContractTernant = (props: Props) => {
   const [codeRoom, setCodeRoom] = useState<any>();
   const { cookies } = useUserContext();
-
+  const [roomData, setRoomData] = useState<any>();
   useEffect(() => {
     const data = cookies?.code_room;
     setCodeRoom(data as any);
   }, [cookies?.code_room]);
-  const arrImage = codeRoom?.contract?.imageContract
-console.log(arrImage);
+
+  useEffect(() => {
+    if (codeRoom?._id) {
+      const getRoomData = async () => {
+        const { data } = await readRoomData(codeRoom?._id)
+        setRoomData(data?.data)
+      };
+      getRoomData();
+    }
+  }, [codeRoom?._id])
+  const arrImage = roomData?.contract?.imageContract
 
   return (
     <div>
@@ -32,7 +42,7 @@ console.log(arrImage);
       <main className='text-center mt-10'>
         {arrImage?.length ? (
           <div className='flex gap-4 flex-wrap justify-center'>
-            {arrImage.map((item: any, index: number) => {
+            {arrImage?.map((item: any, index: number) => {
               return (
                 <div key={index} className="">
                   <Image style={{ width: '400px' }} src={item} alt='' />

@@ -1,15 +1,18 @@
 import dynamic from 'next/dynamic';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Modal } from 'react-responsive-modal';
 import 'react-responsive-modal/styles.css';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useUserContext } from '@/context/UserContext';
 import { useRouter } from 'next/router';
 import { Toast } from 'src/hooks/toast';
 import { IMember, IMember2 } from '@/components/ListMember';
 import { addPeople } from 'src/pages/api/room';
+import ModalChangeMember from '../ListMember/modal-change-member';
+
 
 const ListMember = dynamic(() => import('@/components/ListMember'), { ssr: false });
+
 
 type IProps = {
   data: IMember2;
@@ -18,10 +21,12 @@ type IProps = {
 };
 
 const TenantMember = ({ data, data1, handleResetPage }: IProps) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<boolean>(false);
+  const [modalChangeOneMember, setModalChangeOneMember] = useState<boolean>(false);
+  const [check, setCheck] = useState<string>('');
   const router = useRouter();
   const param = router.query;
-  const { cookies, setLoading, user } = useUserContext();
+  const { cookies, setLoading } = useUserContext();
   const userData = cookies?.user;
   const {
     register,
@@ -30,17 +35,18 @@ const TenantMember = ({ data, data1, handleResetPage }: IProps) => {
   } = useForm();
   const onOpenModal = () => setOpen(true);
   const onCloseModal = () => setOpen(false);
+  const onHandleOpenModalChangeMember = () => {
+    setModalChangeOneMember(true);
+    setCheck('2');
+  }
   const onSubmit = async (listMember: any) => {
     setLoading(true);
     const newData = { ...{ listMember }, userData: userData };
-
     await addPeople(param.id_room, newData).then((result) => {
       setLoading(false);
       setOpen(false);
       Toast('success', result.data.message);
     }).catch((err) => {
-    
-      
       setLoading(false);
       Toast('error', err.message);
     }).finally(() => {
@@ -55,25 +61,41 @@ const TenantMember = ({ data, data1, handleResetPage }: IProps) => {
           <div>
             {' '}
             {data1.length < data.maxMember ? (
-              <button
-                onClick={onOpenModal}
-                className="block mb-5 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Thêm thành viên
-              </button>
+              <div className='flex'>
+                <button
+                  onClick={onOpenModal}
+                  className="block mb-5 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:text-white bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2"
+                >
+                  Thêm thành viên
+                </button>
+                <button
+                  onClick={() => onHandleOpenModalChangeMember()}
+                  className="block mb-5 ml-5 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:text-white bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2"
+                >
+                  Chuyển tất cả thành viên
+                </button>
+
+
+              </div>
+
             ) : (
-              <>
-                <button className="border mb-5 px-3 py-2  bg-cyan-400 text-white  disabled:opacity-50">Đủ người</button>
-              </>
+              <div className='flex'>
+                <button disabled className="block mb-5 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:text-white bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2">Đủ người</button>
+                <button
+                  onClick={() => onHandleOpenModalChangeMember()}
+                  className="block mb-5 ml-5 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:text-white bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2"
+                >
+                  Chuyển tất cả thành viên
+                </button>
+              </div>
             )}
           </div>
         ) : (
-          <div>Phòng chưa sẵn sàng</div>
+          <div>Phòng đang sửa chữa</div>
         )}
 
         <Modal open={open} onClose={onCloseModal} center>
           <div className="w-full pt-6">
-
             <div className="grid grid-flow-col px-4 py-2 text-white bg-cyan-500 mt-4 ">
               <div className="">
                 <h2 className="pt-2 text-xl text-white">Thêm thành viên </h2>
@@ -82,7 +104,7 @@ const TenantMember = ({ data, data1, handleResetPage }: IProps) => {
             <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit(onSubmit)}>
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
-                  Tên thành viên
+                  Tên thành viên <span className="text-[red]">*</span>
                 </label>
                 <input
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -95,13 +117,13 @@ const TenantMember = ({ data, data1, handleResetPage }: IProps) => {
                   <span className="text-[red] mt-1 block">Vui lòng nhập tên thành viên!</span>
                 )}
                 {errors.memberName?.type === 'minLength' && (
-                  <span className="text-[red] mt-1 block">Tên thành viên phải tối thiểu 6 ký tự!</span>
+                  <span className="text-[red] mt-1 block">Tên thành viên tối thiểu 6 ký tự!</span>
                 )}
               </div>
 
               <div className="col-span-6">
                 <label className="block text-gray-700 text-sm font-bold" htmlFor="username">
-                  Chức vụ
+                  Chức vụ <span className="text-[red]">*</span>
                 </label>
                 {data1?.length < 1 ? (
                   <select
@@ -109,7 +131,6 @@ const TenantMember = ({ data, data1, handleResetPage }: IProps) => {
                     {...register('status', { required: true })}
                     id="status"
                   >
-                    {' '}
                     <option value="true">Người đại diện</option>
                   </select>
                 ) : (
@@ -124,36 +145,36 @@ const TenantMember = ({ data, data1, handleResetPage }: IProps) => {
               </div>
               <div className="mb-4 mt-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
-                  CMT/CCCD
+                  CMND/CCCD <span className="text-[red]">*</span>
                 </label>
                 <input
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   id="cardNumber"
                   type="text"
-                  placeholder="Xin mời nhập  CMT/CCCD"
+                  placeholder="Xin mời nhập  CMND/CCCD"
                   {...register('cardNumber', {
                     required: true,
-                    minLength: 12,
+                    minLength: 9,
                     maxLength: 12,
                     pattern: /^[0-9]+$/
                   })}
                 />
                 {errors.cardNumber?.type === 'required' && (
-                  <span className="text-[red] mt-1 block">Vui lòng nhập số CCCD của bạn!</span>
+                  <span className="text-[red] mt-1 block">Vui lòng nhập số CMND/CCCD!</span>
                 )}
                 {errors.cardNumber?.type === 'minLength' && (
-                  <span className="text-[red] mt-1 block">Số CCCD của bạn phải tối thiểu 12 chữ số!</span>
+                  <span className="text-[red] mt-1 block">Số CMND/CCCD không đúng dịnh dạng!</span>
                 )}
                 {errors.cardNumber?.type === 'maxLength' && (
-                  <span className="text-[red] mt-1 block">Số CCCD của bạn phải tối đa 12 chữ số!</span>
+                  <span className="text-[red] mt-1 block">Số CMND/CCCD không đúng dịnh dạng!</span>
                 )}
                 {errors.cardNumber?.type === 'pattern' && (
-                  <span className="text-[red] mt-1 block">Số CCCD của bạn không đúng dịnh dạng!</span>
+                  <span className="text-[red] mt-1 block">Số CMND/CCCD không đúng dịnh dạng!</span>
                 )}
               </div>
               <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
-                  Số điện thoại
+                  Số điện thoại <span className="text-[red]">*</span>
                 </label>
                 <input
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -168,16 +189,16 @@ const TenantMember = ({ data, data1, handleResetPage }: IProps) => {
                   })}
                 />
                 {errors.phoneNumber?.type === 'required' && (
-                  <span className="text-[red] mt-1 block">Vui lòng nhập số điện thoại của bạn!</span>
+                  <span className="text-[red] mt-1 block">Vui lòng nhập số điện thoại!</span>
                 )}
                 {errors.phoneNumber?.type === 'minLength' && (
-                  <span className="text-[red] mt-1 block">Số điện thoại của bạn phải tối thiểu 10 chữ số!</span>
+                  <span className="text-[red] mt-1 block">Số điện thoại không đúng định dạng!</span>
                 )}
                 {errors.phoneNumber?.type === 'maxLength' && (
-                  <span className="text-[red] mt-1 block">Số điện thoại của bạn phải tối đa 10 chữ số!</span>
+                  <span className="text-[red] mt-1 block">Số điện thoại không đúng định dạng!</span>
                 )}
                 {errors.phoneNumber?.type === 'pattern' && (
-                  <span className="text-[red] mt-1 block">Số điện thoại của bạn không đúng định dạng!</span>
+                  <span className="text-[red] mt-1 block">Số điện thoại không đúng định dạng!</span>
                 )}
               </div>
 
@@ -208,7 +229,9 @@ const TenantMember = ({ data, data1, handleResetPage }: IProps) => {
       ) : (
         <div></div>
       )}
+      <ModalChangeMember openModal={modalChangeOneMember} setOpenModal={setModalChangeOneMember} data={data1} cardNumber='' idMember='' name='' phoneNumber='' check={check}></ModalChangeMember>
     </div>
+
   );
 };
 

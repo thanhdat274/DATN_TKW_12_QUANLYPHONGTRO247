@@ -1,5 +1,6 @@
 import instance from './instance';
 import axios from "axios";
+import { IChangeAllMember, IChangeOneMember } from './type';
 
 export const listRoom = (id: any, userData: any) => {
   const url = `/list-room/${userData?.user?._id}/${id}`;
@@ -41,6 +42,11 @@ export const readRoom = (id_room: string, userData: any) => {
     },
   });
 };
+
+export const readRoomData = (id_room: string) => {
+  const url = `/room/${id_room}`;
+  return instance.get(url);
+};
 export const updateRoom = (newData: any) => {
   const url = `/room/update/${newData?.idRoom}`;
   return instance.put(url, newData, {
@@ -48,6 +54,20 @@ export const updateRoom = (newData: any) => {
       Authorization: `Bearer ${newData?.token}`,
     },
   });
+};
+
+export const liquidRoom = (data: any, token?: any) => {
+  const url = `/room/liquidation`;
+  return instance.post(url, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+}
+// update people
+export const updatePeople = (listMember: any, idRoom: any) => {
+  const url = `/room/${idRoom}/updateInfoMember`;
+  return instance.post(url, listMember);
 };
 
 //  api people
@@ -72,7 +92,7 @@ export const removePeople = (_id: any, data: any) => {
 // api ma dang nhap
 
 export const loginCode = (data: any) => {
-  const url = `/rom/edit-code-room`;
+  const url = `/room/edit-code-room`;
   return instance.post(url, data, {
     headers: {
       Authorization: `Bearer ${data?.userData?.token}`,
@@ -93,4 +113,25 @@ export const upload = async (file: any) => {
   });
 
   return data.url;
+};
+// chuyển 1 người qua phòng khác 
+
+export const changeOneMemberApi = (data: IChangeOneMember) => {
+  const url = '/room/change-one-member';
+  return instance.post(url, data, {
+    headers: {
+      Authorization: `Bearer ${data?.userData?.token}`,
+    },
+  });
+};
+
+// chuyển tất cả qua phòng khác
+
+export const changeAllMemberApi = (data: IChangeAllMember) => {
+  const url = '/room/change-all-member';
+  return instance.post(url, data, {
+    headers: {
+      Authorization: `Bearer ${data?.userData?.token}`,
+    },
+  });
 };
