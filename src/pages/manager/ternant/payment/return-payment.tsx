@@ -14,33 +14,30 @@ const ReturnPayment = (props: Props) => {
     const [saveValue, setSaveValue] = useState(false);
     const userData = cookies?.user;
 
-    const checkReturn = async () => {
-        setLoading(true);
-        await checkPaymentReturn(cookies?.code_room?.idHouse, param)
-            .then((result) => {
-                setLoading(false);
-
-                if (result.status == 200) {
-                    Toast('success', 'Sẽ chuyển bạn đến trang hóa đơn sau 2s');
-                    setTimeout(() => {
-                        router.push('/manager/ternant/receipt');
-                    }, 2000);
-                    setSaveValue(true);
-                } else {
-                    Toast('error', 'Xác thực chữ kí không thành công!');
-                }
-            })
-            .catch((err) => {
-
-                setLoading(false);
-            });
-    };
-
     useEffect(() => {
         if (param) {
+            const checkReturn = async () => {
+                setLoading(true);
+                await checkPaymentReturn(cookies?.code_room?.idHouse, param)
+                    .then((result) => {
+                        setLoading(false);
+                        if (result.status == 200) {
+                            Toast('success', 'Sẽ chuyển bạn đến trang hóa đơn sau 2s');
+                            setTimeout(() => {
+                                router.push('/manager/ternant/receipt');
+                            }, 2000);
+                            setSaveValue(true);
+                        } else {
+                            Toast('error', 'Xác thực chữ kí không thành công!');
+                        }
+                    })
+                    .catch((err) => {
+                        setLoading(false);
+                    });
+            };
             checkReturn();
         }
-    }, [param]);
+    }, [cookies?.code_room?.idHouse, param, router, setLoading]);
 
     return <div>ReturnPayment</div>;
 };
