@@ -78,7 +78,7 @@ const LisElectric = () => {
       }
     };
     getServiceData();
-  }, [id, NameBuild]);
+  }, [id, NameBuild, setLoading]);
 
   useEffect(() => {
     const getListBillData = async () => {
