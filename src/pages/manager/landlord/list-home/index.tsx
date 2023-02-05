@@ -27,7 +27,7 @@ const ListHome = () => {
       }
     };
     getHouse();
-  }, [userData]);
+  }, [setLoading, userData]);
 
   const removeHouse = async (_id: number, userData: any) => {
 
