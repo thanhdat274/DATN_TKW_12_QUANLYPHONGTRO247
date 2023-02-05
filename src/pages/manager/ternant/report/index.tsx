@@ -47,7 +47,7 @@ const ListReport = (props: Props) => {
       };
       getReport();
     }
-  }, [idd, resetPage]);
+  }, [codeRoom, idd, resetPage, setLoading]);
 
   // -------------------Add  repost------------------
   const onSubmit = async (data2: any) => {
