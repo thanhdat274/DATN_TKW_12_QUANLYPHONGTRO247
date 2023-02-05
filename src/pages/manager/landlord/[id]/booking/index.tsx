@@ -11,6 +11,7 @@ import AddBooking from './addBooking';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NumericFormat } from 'react-number-format';
+import moment from 'moment';
 type Props = {
   expectTime: Date;
 };
@@ -27,8 +28,8 @@ const Booking = (props: Props) => {
   const [listRooms, setListRooms] = useState<any>();
 
   var today = new Date();
+  const date =  moment(today).format('YYYY-MM-DD')
 
-  var date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
   const [fillter, setfillter] = useState('');
   const {
     register,
@@ -54,7 +55,7 @@ const Booking = (props: Props) => {
       };
       getListBooking();
     }
-  }, [id]);
+  }, [id, userData]);
 
   const onHandleRemove = async (id: any) => {
     const confirm = window.confirm('Bạn có chắc chắn muốn xóa không?');
@@ -81,7 +82,7 @@ const Booking = (props: Props) => {
       };
       getListRoom();
     }
-  }, [id]);
+  }, [id, userData]);
 
 
 
@@ -96,6 +97,7 @@ const Booking = (props: Props) => {
           const daata = data.data
           setListBookings([...listBookings, daata])
           setOpen(false)
+          reset()
           Toast('success', 'Đặt tiền cọc thành công');
         }
       } catch (error: any) {
