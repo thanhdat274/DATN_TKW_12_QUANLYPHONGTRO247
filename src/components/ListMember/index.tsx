@@ -55,7 +55,7 @@ const ListMember = (props: IMember) => {
 
   useEffect(() => {
     reset(props)
-  }, [])
+  }, [props, reset])
   const onHandleOpenModalChangeMember = () => {
     setModalChangeOneMember(true);
     setCheck('1');
