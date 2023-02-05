@@ -27,7 +27,7 @@ const ContractForm = (props: Props) => {
       setLoading(false);
     };
     getContract();
-  }, []);
+  }, [setLoading]);
 
   return (
     <div>
