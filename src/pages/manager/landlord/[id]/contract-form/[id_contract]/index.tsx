@@ -54,7 +54,7 @@ const ContracEdit = (props: Props) => {
       } catch (error) {}
     };
     getRoom();
-  }, [param.id_contract, param.id_room, reset, setLoading]);
+  }, [param.id_room]);
   const contract1 = watch('contract');
   const onSubmit = async (data: any) => {
     setLoading(true);

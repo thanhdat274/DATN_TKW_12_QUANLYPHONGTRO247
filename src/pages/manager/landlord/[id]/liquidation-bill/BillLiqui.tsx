@@ -1,35 +1,11 @@
 import React from 'react'
-
-export type IContractData = {
-  addressCT: string;
-  timeCT: string;
-  startTime: string;
-  endTime: string;
-  additional: any;
-  fine: number;
-  infoTenant: Info;
-  infoLandlord: Info;
-  imageContract: any;
-};
-
-type Info = {
-  name: String;
-  cardNumber: String;
-  dateRange: String;
-  phoneNumber: String;
-  issuedBy: String;
-  deposit: number
-};
-
 type Props = {
-  data: any;
-  dataContract: IContractData;
-  handleResetPage: () => void
-};
-const LiquidationBill = ({ data, dataContract }: Props) => {
+  data: any
+}
+const BillLiqui = ({ data }: Props) => {
   const sumWithInitial =
     data &&
-    data.reduce(
+    data?.payment?.invoiceService?.reduce(
       (previousValue: number, currentValue: any) => previousValue + currentValue.amount,
       0,
     );
@@ -64,22 +40,21 @@ const LiquidationBill = ({ data, dataContract }: Props) => {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {data &&
-                    data
-                      .map((item: any, index: any) => {
-                        return (
-                          <tr key={index}>
-                            <td className="px-9 py-4 whitespace text-sm text-gray-500">
-                              <div className="text-center">{index + 1}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace">
-                              <div className="text-center">{item.serviceName}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace">
-                              <div className="text-center">{item.amount.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}</div>
-                            </td>
-                          </tr>
-                        )
-                      })}
+                    data?.payment?.invoiceService?.map((item: any, index: any) => {
+                      return (
+                        <tr key={index}>
+                          <td className="px-9 py-4 whitespace text-sm text-gray-500">
+                            <div className="text-center">{index + 1}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace">
+                            <div className="text-center">{item?.serviceName}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace">
+                            <div className="text-center">{item?.amount?.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}</div>
+                          </td>
+                        </tr>
+                      )
+                    })}
                   <tr>
 
                     <td className="px-6 py-4 whitespace">
@@ -89,7 +64,7 @@ const LiquidationBill = ({ data, dataContract }: Props) => {
 
                     </td>
                     <td className="px-6 py-4 whitespace">
-                      <div className="text-center">{sumWithInitial.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}</div>
+                      <div className="text-center">{sumWithInitial?.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}</div>
                     </td>
                   </tr>
                 </tbody>
@@ -102,4 +77,4 @@ const LiquidationBill = ({ data, dataContract }: Props) => {
   )
 }
 
-export default LiquidationBill
+export default BillLiqui

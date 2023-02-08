@@ -28,7 +28,7 @@ const Booking = (props: Props) => {
   const [listRooms, setListRooms] = useState<any>();
 
   var today = new Date();
-  const date =  moment(today).format('YYYY-MM-DD')
+  const date = moment(today).format('YYYY-MM-DD')
 
   const [fillter, setfillter] = useState('');
   const {
@@ -55,7 +55,7 @@ const Booking = (props: Props) => {
       };
       getListBooking();
     }
-  }, [id, userData]);
+  }, [id]);
 
   const onHandleRemove = async (id: any) => {
     const confirm = window.confirm('Bạn có chắc chắn muốn xóa không?');
@@ -82,7 +82,7 @@ const Booking = (props: Props) => {
       };
       getListRoom();
     }
-  }, [id, userData]);
+  }, [id]);
 
 
 
@@ -177,6 +177,7 @@ const Booking = (props: Props) => {
                           }
                         })
                         .map((item: any, index: number) => {
+
                           return (
                             <>
                               {item.expectTime == date ? (
@@ -199,7 +200,7 @@ const Booking = (props: Props) => {
                                   </td>
                                   <td className="flex pt-2">
                                     <div>
-                                      <AddBooking item1={item._id} item2={item.idRoom}></AddBooking>
+                                      <AddBooking item1={item._id} item2={item.idRoom} deposit={item.bookMoney}></AddBooking>
                                     </div>
                                     <div>
                                       <button
@@ -233,7 +234,7 @@ const Booking = (props: Props) => {
                                   </td>
                                   <td className="flex pt-2">
                                     <div>
-                                      <AddBooking item1={item._id} item2={item.idRoom}></AddBooking>
+                                      <AddBooking item1={item._id} item2={item.idRoom} deposit={item.bookMoney}></AddBooking>
                                     </div>
                                     <div>
                                       <button
@@ -511,7 +512,7 @@ const Booking = (props: Props) => {
           </div>
         </div>
       </Modal>
-    </div>
+    </div >
   );
 };
 
