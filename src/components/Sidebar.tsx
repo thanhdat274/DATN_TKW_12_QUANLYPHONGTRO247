@@ -47,7 +47,7 @@ const SideBar = () => {
       getReport();
       setLoading(false);
     }
-  }, [id, resetPage, setLoading, userData]);
+  }, [id, resetPage]);
 
   return (
     <>
