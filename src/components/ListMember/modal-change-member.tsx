@@ -33,7 +33,7 @@ const ModalChangeMember = (props: Props) => {
       };
       getListRoom();
     }
-  }, [id, userData]);
+  }, [id]);
   const [form] = Form.useForm();
   const onFinish = async (values: ITypeChangeOneMember) => {
     if (props.check == '1') {
