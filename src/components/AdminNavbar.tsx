@@ -71,7 +71,7 @@ const Navbar = (props: Props) => {
       };
       getReport();
     }
-  }, [id, setLoading, userData]);
+  }, [id]);
 
   const CountValueStatus = useMemo(() => {
     return (
