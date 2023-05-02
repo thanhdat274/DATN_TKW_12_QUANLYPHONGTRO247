@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.css-h2okw {
+  max-height: 500px !important;
+  max-width: 500px !important;
+  min-width: 300px !important;
+  width: 20vw !important;
+  margin: auto !important;
+}
+
+.css-hayew9 {
+  font-size: 50px !important;
+
+  max-height: fit-content !important;
+}
+
+.css-h2okw > button {
+  font-size: 50px !important;
+  border: 1px solid black !important;
+}
+
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+img {
+  display: inline-block;
+}
+
+.react-responsive-modal-modal {
+  min-width: 40%;
+}
+
+@media (max-width: 1023px) {
+  .react-responsive-modal-modal {
+    min-width: 60%;
+  }
+}
+
+.react-responsive-modal-closeButton {
+  margin-bottom: 10px;
+}
+
+.value-right {
+  /* direction: rtl; */
+  /* unicode-bidi: bidi-override; */
+}
+
+.icon-vnd {
+  background: url('../../../public/images/noun-dong-3451411.png') no-repeat right;
+  background-size: 20px;
+}
+
+.min-h-80vh {
+  min-height: 80vh;
+}
